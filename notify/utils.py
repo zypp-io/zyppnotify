@@ -13,7 +13,7 @@ def check_environment_variables(required_variables: list):
     -------
 
     """
-    # Test if environment variables are set for Twinfield login
+    # Test if environment variables are set.
 
     values = [os.environ.get(x) for x in required_variables]
 
