@@ -7,15 +7,15 @@ with open("requirements.txt") as fp:
     install_requires = fp.read()
 
 setup(
-    name="notify",
-    version="0.1.0",
+    name="zyppnotify",
+    version="0.1.1",
     author="Erfan Nariman, Melvin Folkers",
     author_email="erfan@zypp.io, melvin@zypp.io",
     description="Send users notifications through various platforms",
     long_description=long_description,
     long_description_content_type="text/markdown",
     keywords="python, notifications, teams, whatsapp, e-mail, sms",
-    url="https://github.com/zypp-io/notify",
+    url="https://github.com/zypp-io/zyppnotify",
     packages=find_packages(),
     install_requires=install_requires,
     classifiers=[
@@ -25,7 +25,7 @@ setup(
     ],
     python_requires=">=3.6",
     project_urls={
-        "Bug Reports": "https://github.com/zypp-io/notify/issues",
-        "Source": "https://github.com/zypp-io/notify",
+        "Bug Reports": "https://github.com/zypp-io/zyppnotify/issues",
+        "Source": "https://github.com/zypp-io/zyppnotify",
     },
 )

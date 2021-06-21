@@ -9,7 +9,7 @@ Notify
 ---
 
 ```commandline
-pip install git+ssh://git@github.com/zypp-io/notify.git
+pip install zyppnotify
 ```
 
 ## Notify Mail
