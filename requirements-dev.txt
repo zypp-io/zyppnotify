@@ -2,3 +2,4 @@ keyvault
 pytest
 pymsteams
 pandas
+tabulate
