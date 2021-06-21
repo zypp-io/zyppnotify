@@ -1,4 +1,6 @@
+import pandas as pd
 import pymsteams
+from notify.exceptions import DataFrameTooLarge
 
 
 class NotifyTeams:
@@ -13,6 +15,32 @@ class NotifyTeams:
 
         self.msg = pymsteams.connectorcard(webhook)
         self.msg.color("#F0B62E")
+
+    def add_full_dataframe(self, df: pd.DataFrame) -> None:
+        """
+
+        Parameters
+        ----------
+
+        df: pd.DataFrame
+            Dataframe that will be added to the card.
+
+        Returns
+        -------
+        None
+            Adds a section for the table to the teams message object.
+
+        """
+
+        if df.shape[0] > 30:
+            raise DataFrameTooLarge(
+                f"table is be too large for the message ({df.shape[0]}> the limit of 30)"
+            )
+
+        section = pymsteams.cardsection()
+        md_table = df.to_markdown(index=False)
+        section.text(md_table)
+        self.msg.addSection(section)
 
     def create_dataframe_report(self, dfs: dict) -> None:
         """
@@ -33,8 +61,7 @@ class NotifyTeams:
             section = pymsteams.cardsection()
             section.activityTitle(f"<h1><b>{df_name}</b></h1>")
             section.activityImage(
-                "https://www.vhv.rs/dpng/d/"
-                "593-5938489_table-icon-circle-png-png-download-table-icon.png"
+                "https://pbs.twimg.com/profile_images/1269974132818620416/nt7fTdpB.jpg"
             )
             section.text(
                 f"> In totaal **{df.shape[0]}** records met **{df.shape[1]}** kolommen verwerkt"
@@ -64,6 +91,7 @@ class NotifyTeams:
         title: str,
         message: str = None,
         buttons: dict = None,
+        df: pd.DataFrame = pd.DataFrame(),
         dfs: dict = None,
     ) -> None:
         """
@@ -73,6 +101,8 @@ class NotifyTeams:
         ----------
         dfs: dict
             Dataframes dictionary, with keys as dataframe name and value as dataframe.
+        df: pd.DataFrame
+            df that will be added to a card section. length of dataframe should not exceed 10.
         title: str
             Title of the message (optional)
         message: str
@@ -93,6 +123,9 @@ class NotifyTeams:
 
         if dfs:
             self.create_dataframe_report(dfs)
+
+        if not df.empty:
+            self.add_full_dataframe(df)
 
         if buttons:
             self.create_buttons(buttons)

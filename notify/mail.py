@@ -1,19 +1,28 @@
 import os
 import smtplib
-from typing import Union
-from pathlib import Path
+from email import encoders
+from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from email.mime.base import MIMEBase
-from email import encoders
 from email.utils import formatdate
+from pathlib import Path
+from typing import Union
 
-from notify.utils import check_environment_variables
+import pandas as pd
+
+from notify.exceptions import DataFrameTooLarge
+from notify.utils import check_environment_variables, dataframe_to_html
 
 
 class NotifyMail:
     def __init__(
-        self, to: str, subject: str, message: str, cc: str = None, files: Union[str, list] = None
+        self,
+        to: str,
+        subject: str,
+        message: str,
+        cc: str = None,
+        files: Union[str, list] = None,
+        df: pd.DataFrame = pd.DataFrame(),
     ):
         """
         This function sends an e-mail from Microsoft Exchange server
@@ -30,6 +39,8 @@ class NotifyMail:
             e-mail adress to add as cc
         files: str, list
             Path(s) to file(s) to add as attachment
+        df: pd.DataFrame
+            dataframe that needs to be added to the HTML message.
         """
 
         self.to = to
@@ -41,6 +52,7 @@ class NotifyMail:
         check_environment_variables(["EMAIL_USER", "EMAIL_PW"])
         self.username = os.environ.get("EMAIL_USER")
         self.pw = os.environ.get("EMAIL_PW")
+        self.df = df
 
     def send_email(self) -> None:
         """
@@ -60,6 +72,14 @@ class NotifyMail:
         msg["Cc"] = self.cc
         msg["Date"] = formatdate(localtime=True)
         msg["Subject"] = self.subject
+
+        if self.df.shape[0] in range(1, 30):
+            html_table = dataframe_to_html(df=self.df)
+            self.message += html_table
+        elif self.df.shape[0] > 30:
+            raise DataFrameTooLarge(
+                f"table is be too large for the message ({self.df.shape[0]}> the limit of 35)"
+            )
 
         msg.attach(MIMEText(self.message, "html"))
 
