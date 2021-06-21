@@ -9,15 +9,9 @@ teams = NotifyTeams(webhook=os.environ.get("teams_webhook"))
 
 
 def import_sample_dfs():
-    stamdata = pd.DataFrame(
-        [
-            {"naam": "Melvin", "geb_datum": "12-03-1991", "telefoon": "0652652852"},
-            {"naam": "Erfan ", "geb_datum": "02-07-1991", "telefoon": "0652652852"},
-            {"naam": "Alejandra", "geb_datum": "01-07-1990", "telefoon": "0652652852"},
-        ]
-    )
+    df1 = pd.DataFrame({"numbers": [1, 2, 3], "colors": ["red", "white", "blue"]})
 
-    transacties = pd.DataFrame(
+    df2 = pd.DataFrame(
         {
             "2018-01": np.random.randint(1000, 10000, 5),
             "2018-03": np.random.randint(1000, 10000, 5),
@@ -30,7 +24,7 @@ def import_sample_dfs():
         }
     )
 
-    dfs = {"stamdata": stamdata, "transacties": transacties}
+    dfs = {"Metadata": df1, "Transactions": df2}
 
     return dfs
 
