@@ -19,11 +19,11 @@ def test_send_single_email():
 
 def test_send_email_with_table():
     message = "This is a test from notify"
-    df = import_sample_dfs().get("Metadata")
+    df = import_sample_dfs().get("Transactions")
 
     NotifyMail(
         to=f"{os.environ.get('TEST_EMAIL_1')}",
-        subject="Test Notify single email",
+        subject="Test Notify with HTML table",
         message=message,
         df=df,
     ).send_email()
@@ -37,7 +37,7 @@ def test_send_email_with_too_large_table():
     with pytest.raises(DataFrameTooLarge):
         NotifyMail(
             to=f"{os.environ.get('TEST_EMAIL_1')}",
-            subject="Test Notify single email",
+            subject="Test Notify with HTML table",
             message=message,
             df=df,
         ).send_email()
