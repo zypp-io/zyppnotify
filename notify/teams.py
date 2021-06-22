@@ -1,6 +1,6 @@
 import pandas as pd
 import pymsteams
-from notify.exceptions import DataFrameTooLarge
+import logging
 
 
 class NotifyTeams:
@@ -33,9 +33,10 @@ class NotifyTeams:
         """
 
         if df.shape[0] > 30:
-            raise DataFrameTooLarge(
-                f"table is be too large for the message ({df.shape[0]}> the limit of 30)"
+            logging.warning(
+                f"only first 30 records will be added.({df.shape[0]}> the limit of 30)."
             )
+            df = df.head(n=30)
 
         section = pymsteams.cardsection()
         md_table = df.to_markdown(index=False)

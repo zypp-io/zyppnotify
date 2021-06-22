@@ -7,10 +7,9 @@ from email.mime.text import MIMEText
 from email.utils import formatdate
 from pathlib import Path
 from typing import Union
-
+import logging
 import pandas as pd
 
-from notify.exceptions import DataFrameTooLarge
 from notify.utils import check_environment_variables, dataframe_to_html
 
 
@@ -75,12 +74,15 @@ class NotifyMail:
 
         if self.df.shape[0] in range(1, 30):
             html_table = dataframe_to_html(df=self.df)
-            self.message += html_table
         elif self.df.shape[0] > 30:
-            raise DataFrameTooLarge(
-                f"table is be too large for the message ({self.df.shape[0]}> the limit of 35)"
+            logging.warning(
+                f"only first 30 records will be added.({self.df.shape[0]}> the limit of 30)."
             )
+            html_table = dataframe_to_html(df=self.df.head(n=30))
+        else:
+            html_table = ""  # no data in dataframe (0 records)
 
+        self.message += html_table
         msg.attach(MIMEText(self.message, "html"))
 
         # attach files if these are given else ignore

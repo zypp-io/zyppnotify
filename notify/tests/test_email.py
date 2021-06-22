@@ -1,10 +1,8 @@
 import os
 import time
 from keyvault import secrets_to_environment
-import pytest
 from notify import NotifyMail
 from notify.tests import import_sample_dfs
-from notify.exceptions import DataFrameTooLarge
 
 secrets_to_environment("notify")
 
@@ -27,21 +25,6 @@ def test_send_email_with_table():
         message=message,
         df=df,
     ).send_email()
-    time.sleep(2)
-
-
-def test_send_email_with_too_large_table():
-    message = "This is a test from notify"
-    df = import_sample_dfs(transactions=35).get("Transactions")
-
-    with pytest.raises(DataFrameTooLarge):
-        NotifyMail(
-            to=f"{os.environ.get('TEST_EMAIL_1')}",
-            subject="Test Notify with HTML table",
-            message=message,
-            df=df,
-        ).send_email()
-
     time.sleep(2)
 
 
@@ -69,4 +52,4 @@ def test_send_file():
 if __name__ == "__main__":
     # test_send_single_email()
     # test_send_multiple_emails()
-    test_send_email_with_too_large_table()
+    test_send_email_with_table()
