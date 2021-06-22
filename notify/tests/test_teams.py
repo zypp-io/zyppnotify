@@ -1,32 +1,11 @@
 import os
 from notify import NotifyTeams
-import pandas as pd
-import numpy as np
 from keyvault import secrets_to_environment
+from notify.tests import import_sample_dfs
+
 
 secrets_to_environment("notify")
 teams = NotifyTeams(webhook=os.environ.get("teams_webhook"))
-
-
-def import_sample_dfs():
-    df1 = pd.DataFrame({"numbers": [1, 2, 3], "colors": ["red", "white", "blue"]})
-
-    df2 = pd.DataFrame(
-        {
-            "2018-01": np.random.randint(1000, 10000, 5),
-            "2018-03": np.random.randint(1000, 10000, 5),
-            "2018-04": np.random.randint(1000, 10000, 5),
-            "2019-02": np.random.randint(1000, 10000, 5),
-            "2019-08": np.random.randint(1000, 10000, 5),
-            "2020-05": np.random.randint(1000, 10000, 5),
-            "2020-11": np.random.randint(1000, 10000, 5),
-            "2020-12": np.random.randint(1000, 10000, 5),
-        }
-    )
-
-    dfs = {"Metadata": df1, "Transactions": df2}
-
-    return dfs
 
 
 def test_teams_basic_message():
@@ -60,5 +39,19 @@ def test_teams_with_dfs():
     )  # creates a report on the dataframes processed.
 
 
+def test_teams_with_df():
+    """
+    versturen van een uitgebreid rapport over dataframes.
+    inclusief buttons.
+    """
+
+    df = import_sample_dfs().get("Transactions")
+    teams.basic_message(
+        title="Pytest with 1 dataframe",
+        message=("This is an test message, send with notify.<br>"),
+        df=df,
+    )  # adds the dataframe to the message as a table
+
+
 if __name__ == "__main__":
-    test_teams_with_dfs()
+    test_teams_with_df()
