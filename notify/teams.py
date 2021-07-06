@@ -110,7 +110,10 @@ class NotifyTeams:
             Content of the message (optional)
         buttons: dict
             dictionary of button_name, button_url as key value pairs
-
+        df: pd.DataFrame
+            dataframe that will be added to the teams message.
+        dfs: pd.DataFrame
+            dataframes that will be reported with column count, record count.
         Returns
         -------
         None
