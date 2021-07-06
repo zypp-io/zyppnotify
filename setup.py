@@ -8,7 +8,7 @@ with open("requirements.txt") as fp:
 
 setup(
     name="zyppnotify",
-    version="0.1.3",
+    version="0.1.4",
     author="Erfan Nariman, Melvin Folkers",
     author_email="erfan@zypp.io, melvin@zypp.io",
     description="Send users notifications through various platforms",
