@@ -1,6 +1,7 @@
+import logging
+
 import pandas as pd
 import pymsteams
-import logging
 
 
 class NotifyTeams:
@@ -33,9 +34,7 @@ class NotifyTeams:
         """
 
         if df.shape[0] > 30:
-            logging.warning(
-                f"only first 30 records will be added.({df.shape[0]}> the limit of 30)."
-            )
+            logging.warning(f"only first 30 records will be added.({df.shape[0]}> the limit of 30).")
             df = df.head(n=30)
 
         section = pymsteams.cardsection()
@@ -61,12 +60,8 @@ class NotifyTeams:
         for df_name, df in dfs.items():
             section = pymsteams.cardsection()
             section.activityTitle(f"<h1><b>{df_name}</b></h1>")
-            section.activityImage(
-                "https://pbs.twimg.com/profile_images/1269974132818620416/nt7fTdpB.jpg"
-            )
-            section.text(
-                f"> In totaal **{df.shape[0]}** records met **{df.shape[1]}** kolommen verwerkt"
-            )
+            section.activityImage("https://pbs.twimg.com/profile_images/1269974132818620416/nt7fTdpB.jpg")
+            section.text(f"> In totaal **{df.shape[0]}** records met **{df.shape[1]}** kolommen verwerkt")
             self.msg.addSection(section)
 
     def create_buttons(self, buttons: dict) -> None:
