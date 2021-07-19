@@ -22,8 +22,8 @@ def format_numbers(df: pd.DataFrame, currency_columns: list = None, number_colum
     Returns
     -------
     df: pd.DataFrame
-        dataset met nieuwe kolommen (voorzien van suffix _txt) die gebruikt kunnen worden voor het presenteren van
-        bedrag en nummer kolomvelden.
+        dataset met kolommen die gebruikt kunnen worden voor het presenteren van
+        bedragen en nummers (locale=NL).
     """
 
     # format de bedrag kolommen
@@ -34,11 +34,11 @@ def format_numbers(df: pd.DataFrame, currency_columns: list = None, number_colum
         currency_columns = []
 
     for col in currency_columns:
-        df[f"{col}_txt"] = df[col].apply(lambda x: format_currency(number=x, currency="EUR", locale="nl_NL"))
+        df[col] = df[col].apply(lambda x: format_currency(number=x, currency="EUR", locale="nl_NL"))
 
     # format de nummer kolommen
     for col in number_columns:
-        df[f"{col}_txt"] = df[col].apply(lambda x: format_decimal(number=x, locale="nl_NL"))
+        df[col] = df[col].apply(lambda x: format_decimal(number=x, locale="nl_NL"))
 
     return df
 
