@@ -30,14 +30,14 @@ mail.send_email()
 ## Notify Teams
 ```python
 from notify import NotifyTeams
-from notify.utils import import_sample_dfs
+from notify.tests import import_sample_dfs
 
 webhook = ("REPLACE_ME")
 
 teams = NotifyTeams(webhook=webhook)
 
 # versturen van een basis bericht met onderwerp en tekst
-teams.basic_message(title="Notify me!", 
+teams.basic_message(title="Notify me!",
                     message="This is a test message, send through the notify package")
 
 # versturen van een uitgebreid rapport over dataframes.
@@ -47,4 +47,16 @@ teams.basic_message(title="Notify me!",
                     buttons={"button_name": "https://www.my_link.nl"},
                     dfs=dfs) #  creates a report on the dataframes processed.
 
+```
+
+## Notify utils
+```python
+from notify import format_numbers, dataframe_to_html
+from notify.tests import import_sample_dfs
+
+df = import_sample_dfs().get("Transactions")
+
+# format numbers and currencies using dutch locale
+df = format_numbers(df, currency_columns=["amount"], number_columns=[])
+html_table = dataframe_to_html(df)
 ```

@@ -64,14 +64,18 @@ def check_environment_variables(required_variables: list):
 
 def dataframe_to_html(df: pd.DataFrame) -> str:
     """
+    Deze functie zet een dataframe om in een opgemaakte HTML table. Wanneer de gebruiker zelfstandig een HTML bericht
+    opbouwt, kan deze functie uitkomst bieden voor het invoegen van html tabellen.
 
     Parameters
     ----------
-    df
+    df: pd.DataFrame
+        dataframe die in een HTML table geconverteerd dient te worden.
 
     Returns
     -------
-
+    pretty_html_table: str
+        html body voor de gegeneerde HTML tabel
     """
 
     html_table = df.to_html(index=False, classes="styled-table", justify="center")
