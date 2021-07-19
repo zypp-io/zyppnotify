@@ -1,8 +1,46 @@
 import os
 
 import pandas as pd
+from babel.numbers import format_currency, format_decimal
 
 from notify.exceptions import EnvironmentVariablesError
+
+
+def format_numbers(df: pd.DataFrame, currency_columns: list = None, number_columns: list = None):
+    """
+    Deze functie converteerd currency (bedrag) en number (getal) kolommen naar geformatteerde tekstvelden.
+
+    Parameters
+    ----------
+    df: pd.DataFrame
+        dataset waarin kolommen staan die geconverteerd dienen te worden
+    currency_columns: list
+        lijst met kolomnamen die geconverteerd worden naar € kolommen en formats.
+    number_columns: list
+        lijst met kolomnamen die geconverteerd worden naar nummer kolommen met nederlandse annotatie.
+
+    Returns
+    -------
+    df: pd.DataFrame
+        dataset met nieuwe kolommen (voorzien van suffix _txt) die gebruikt kunnen worden voor het presenteren van
+        bedrag en nummer kolomvelden.
+    """
+
+    # format de bedrag kolommen
+    if number_columns is None:
+        number_columns = []
+
+    if currency_columns is None:
+        currency_columns = []
+
+    for col in currency_columns:
+        df[f"{col}_txt"] = df[col].apply(lambda x: format_currency(number=x, currency="EUR", locale="nl_NL"))
+
+    # format de nummer kolommen
+    for col in number_columns:
+        df[f"{col}_txt"] = df[col].apply(lambda x: format_decimal(number=x, locale="nl_NL"))
+
+    return df
 
 
 def check_environment_variables(required_variables: list):
@@ -21,9 +59,7 @@ def check_environment_variables(required_variables: list):
     values = [os.environ.get(x) for x in required_variables]
 
     if not all(values):
-        raise EnvironmentVariablesError(
-            f"One of the environment variables {', '.join(required_variables)} is not set"
-        )
+        raise EnvironmentVariablesError(f"One of the environment variables {', '.join(required_variables)} is not set")
 
 
 def dataframe_to_html(df: pd.DataFrame) -> str:
