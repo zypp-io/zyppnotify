@@ -1,3 +1,4 @@
+import logging
 import os
 import smtplib
 from email import encoders
@@ -7,7 +8,7 @@ from email.mime.text import MIMEText
 from email.utils import formatdate
 from pathlib import Path
 from typing import Union
-import logging
+
 import pandas as pd
 
 from notify.utils import check_environment_variables, dataframe_to_html
@@ -75,9 +76,7 @@ class NotifyMail:
         if self.df.shape[0] in range(1, 30):
             html_table = dataframe_to_html(df=self.df)
         elif self.df.shape[0] > 30:
-            logging.warning(
-                f"only first 30 records will be added.({self.df.shape[0]}> the limit of 30)."
-            )
+            logging.warning(f"only first 30 records will be added.({self.df.shape[0]}> the limit of 30).")
             html_table = dataframe_to_html(df=self.df.head(n=30))
         else:
             html_table = ""  # no data in dataframe (0 records)
