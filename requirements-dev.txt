@@ -3,3 +3,4 @@ pytest
 pymsteams
 pandas
 tabulate
+pre-commit
