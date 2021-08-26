@@ -1,4 +1,5 @@
 <div style="text-align:center"><img alt="logo" src="https://www.zypp.io/static/assets/img/logos/zypp/white/500px.png" width="200"></div>
+<br>
 
 [![Downloads](https://pepy.tech/badge/zyppnotify)](https://pepy.tech/project/zyppnotify)
 [![PyPI version](https://badge.fury.io/py/zyppnotify.svg)](https://badge.fury.io/py/zyppnotify)

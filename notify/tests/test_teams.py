@@ -48,7 +48,7 @@ def test_teams_with_df():
     df = import_sample_dfs().get("Transactions")
     teams.basic_message(
         title="Pytest with 1 dataframe",
-        message=("This is an test message, send with notify.<br>"),
+        message="This is an test message, send with notify.<br>",
         df=df,
     )  # adds the dataframe to the message as a table
 

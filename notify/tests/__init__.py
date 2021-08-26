@@ -24,6 +24,6 @@ def import_sample_dfs(transactions: int = 7):
         (pd.to_datetime("now") - pd.Timedelta(value=x, unit="days")).strftime("%Y-%m-%d") for x in range(transactions)
     ]
 
-    dfs = {"Metadata": df1, "Transactions": df2}
+    dfs = {"Metadata": df1.shape, "Transactions": df2.shape}
 
     return dfs
