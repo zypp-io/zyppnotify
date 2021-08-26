@@ -1,8 +1,9 @@
 import os
-from notify import NotifyTeams
-from keyvault import secrets_to_environment
-from notify.tests import import_sample_dfs
 
+from keyvault import secrets_to_environment
+
+from notify import NotifyTeams
+from notify.tests import import_sample_dfs
 
 secrets_to_environment("notify")
 teams = NotifyTeams(webhook=os.environ.get("teams_webhook"))
@@ -23,6 +24,8 @@ def test_teams_with_dfs():
     """
 
     dfs = import_sample_dfs()
+    # set dataframes to shapes
+    dfs = {name: df.shape for name, df in dfs.items()}
     teams.basic_message(
         title="Pytest",
         message=(
