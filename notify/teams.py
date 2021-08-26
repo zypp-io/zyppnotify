@@ -3,6 +3,8 @@ import logging
 import pandas as pd
 import pymsteams
 
+from notify.types import DfsInfo
+
 
 class NotifyTeams:
     def __init__(self, webhook: str):
@@ -42,7 +44,7 @@ class NotifyTeams:
         section.text(md_table)
         self.msg.addSection(section)
 
-    def create_dataframe_report(self, dfs: dict) -> None:
+    def create_dataframe_report(self, dfs: DfsInfo) -> None:
         """
 
         Parameters
@@ -57,11 +59,11 @@ class NotifyTeams:
             Adds a section for the table to the teams message object.
 
         """
-        for df_name, df in dfs.items():
+        for df_name, df_shape in dfs.items():
             section = pymsteams.cardsection()
             section.activityTitle(f"<h1><b>{df_name}</b></h1>")
             section.activityImage("https://pbs.twimg.com/profile_images/1269974132818620416/nt7fTdpB.jpg")
-            section.text(f"> In totaal **{df.shape[0]}** records met **{df.shape[1]}** kolommen verwerkt")
+            section.text(f"> In totaal **{df_shape[0]}** records met **{df_shape[1]}** kolommen verwerkt")
             self.msg.addSection(section)
 
     def create_buttons(self, buttons: dict) -> None:
@@ -88,7 +90,7 @@ class NotifyTeams:
         message: str = None,
         buttons: dict = None,
         df: pd.DataFrame = pd.DataFrame(),
-        dfs: dict = None,
+        dfs: DfsInfo = None,
     ) -> None:
         """
         This function posts a message, containing a section, in a Microsoft Teams channel
@@ -105,10 +107,7 @@ class NotifyTeams:
             Content of the message (optional)
         buttons: dict
             dictionary of button_name, button_url as key value pairs
-        df: pd.DataFrame
-            dataframe that will be added to the teams message.
-        dfs: pd.DataFrame
-            dataframes that will be reported with column count, record count.
+
         Returns
         -------
         None
