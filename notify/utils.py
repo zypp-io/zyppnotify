@@ -45,6 +45,8 @@ def format_numbers(df: pd.DataFrame, currency_columns: list = None, number_colum
 
 def check_environment_variables(required_variables: list):
     """
+    Test if environment variables are set.
+
     Parameters
     ----------
     required_variables: list
@@ -52,10 +54,8 @@ def check_environment_variables(required_variables: list):
 
     Returns
     -------
-
+    None
     """
-    # Test if environment variables are set.
-
     values = [os.environ.get(x) for x in required_variables]
 
     if not all(values):
