@@ -3,8 +3,6 @@ import pathlib
 
 from setuptools.config import read_configuration
 
-from notify import __version__
-
 
 def get_config():
     repo_path = pathlib.Path(__file__).parent.parent.absolute()
@@ -24,14 +22,5 @@ def check_requirements():
     print("Requirements and setup.cfg and both are equal")
 
 
-def check_version():
-    config_setup, repo_path = get_config()
-    config_version = config_setup["metadata"]["version"]
-
-    assert config_version == __version__, "Versions are not equal"
-    print(f"Version in setup.py and __init__.py are equal: {__version__}")
-
-
 if __name__ == "__main__":
     check_requirements()
-    check_version()
