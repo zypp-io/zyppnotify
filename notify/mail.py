@@ -25,7 +25,7 @@ class NotifyMail:
         df: pd.DataFrame = pd.DataFrame(),
         server: str = "smtp.office365.com",
         port: str = 587,
-        user_tls: bool = True
+        user_tls: bool = True,
     ):
         """
         This function sends an e-mail from Microsoft Exchange server
