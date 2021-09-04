@@ -8,13 +8,13 @@ with open("requirements.txt") as fp:
 
 setup(
     name="zyppnotify",
-    version="0.2.0",
+    version="0.2.1",
     author="Erfan Nariman, Melvin Folkers",
     author_email="erfan@zypp.io, melvin@zypp.io",
     description="Send users notifications through various platforms",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    keywords="python, notifications, teams, whatsapp, e-mail, sms",
+    keywords="python, notifications, teams, e-mail",
     url="https://github.com/zypp-io/zyppnotify",
     packages=find_packages(),
     install_requires=install_requires,
