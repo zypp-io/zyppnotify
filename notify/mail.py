@@ -23,6 +23,9 @@ class NotifyMail:
         cc: str = None,
         files: Union[str, list] = None,
         df: pd.DataFrame = pd.DataFrame(),
+        server: str = "smtp.office365.com",
+        port: str = 587,
+        user_tls: bool = True
     ):
         """
         This function sends an e-mail from Microsoft Exchange server
@@ -54,6 +57,10 @@ class NotifyMail:
         self.pw = os.environ.get("EMAIL_PW")
         self.df = df
 
+        self.server = server
+        self.port = port
+        self.use_tls = user_tls
+
     def send_email(self) -> None:
         """
         This function sends an e-mail from Microsoft Exchange server
@@ -62,10 +69,6 @@ class NotifyMail:
         -------
         None
         """
-        server = "smtp.office365.com"
-        port = 587
-        use_tls = True
-
         msg = MIMEMultipart()
         msg["From"] = self.username
         msg["To"] = self.to
@@ -76,7 +79,7 @@ class NotifyMail:
         if self.df.shape[0] in range(1, 30):
             html_table = dataframe_to_html(df=self.df)
         elif self.df.shape[0] > 30:
-            logging.warning(f"only first 30 records will be added.({self.df.shape[0]}> the limit of 30).")
+            logging.warning(f"Only first 30 records will be added. ({self.df.shape[0]} > the limit of 30).")
             html_table = dataframe_to_html(df=self.df.head(n=30))
         else:
             html_table = ""  # no data in dataframe (0 records)
@@ -95,11 +98,10 @@ class NotifyMail:
                 part.add_header("Content-Disposition", f"attachment; filename={Path(path).name}")
                 msg.attach(part)
 
-        smtp = smtplib.SMTP(server, port)
-        if use_tls:
+        smtp = smtplib.SMTP(self.server, self.port)
+        if self.use_tls:
             smtp.starttls()
 
         smtp.login(self.username, self.pw)
-        # smtp.sendmail(self.username, self.to, msg.as_string())
         smtp.send_message(msg=msg)
         smtp.quit()
