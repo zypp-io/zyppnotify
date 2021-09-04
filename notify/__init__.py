@@ -9,3 +9,6 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %H:%M:%S",
     level=logging.INFO,
 )
+
+name = "notify"
+__version__ = "0.2.1"

@@ -1,4 +1,5 @@
 from setuptools import find_packages, setup
+from notify import __version__
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -8,7 +9,7 @@ with open("requirements.txt") as fp:
 
 setup(
     name="zyppnotify",
-    version="0.2.1",
+    version=__version__,
     author="Erfan Nariman, Melvin Folkers",
     author_email="erfan@zypp.io, melvin@zypp.io",
     description="Send users notifications through various platforms",
