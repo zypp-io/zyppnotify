@@ -16,4 +16,4 @@ jobs:
           python-version: 3.8
       - name: execute py script
         run: |
-          python ./scripts/check_requirements_and_version.py
+          python ./scripts/check_requirements.py
