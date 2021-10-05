@@ -2,6 +2,7 @@ import logging
 
 import pandas as pd
 import pymsteams
+from pymsteams import TeamsWebhookException
 
 
 class NotifyTeams:
@@ -129,4 +130,7 @@ class NotifyTeams:
         if buttons:
             self.create_buttons(buttons)
 
-        self.msg.send()
+        try:
+            self.msg.send()
+        except TeamsWebhookException:
+            logging.warning("Teams notification not send!")
