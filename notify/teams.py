@@ -133,4 +133,4 @@ class NotifyTeams:
         try:
             self.msg.send()
         except TeamsWebhookException:
-            logging.warning("Teams notification not send!")
+            logging.warning("Teams notification not sent!")
