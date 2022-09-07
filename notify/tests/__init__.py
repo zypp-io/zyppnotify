@@ -1,11 +1,7 @@
 import numpy as np
 import pandas as pd
 
-PDF_STORAGE_LINK = (
-    "https://zyppsandboxstorage.blob.core.windows.net/sandbox/Notify/NotifySample.pdf"
-    "?sv=2021-04-10&st=2022-09-07T09%3A40%3A55Z&se=2025-01-01T10%3A40%3A00Z&sr=b&sp=r&sig="
-    "EQkqHZ7FI%2B%2FnD3C4Uo97l614hPtycKp%2BA1odhsvkprI%3D"
-)
+PDF_STORAGE_LINK = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
 
 
 def import_sample_dfs(transactions: int = 7):
@@ -27,7 +23,7 @@ def import_sample_dfs(transactions: int = 7):
     df2 = pd.DataFrame(index=range(transactions))
     df2["amount"] = [np.random.randint(1000, 10000) for x in range(transactions)]
     df2["date"] = [
-        (pd.to_datetime("now") - pd.Timedelta(value=x, unit="days")).strftime("%Y-%m-%d") for x in range(transactions)
+        (pd.Timestamp.now() - pd.Timedelta(value=x, unit="days")).strftime("%Y-%m-%d") for x in range(transactions)
     ]
 
     dfs = {"Metadata": df1, "Transactions": df2}
