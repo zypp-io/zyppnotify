@@ -1,6 +1,12 @@
 import numpy as np
 import pandas as pd
 
+PDF_STORAGE_LINK = (
+    "https://zyppsandboxstorage.blob.core.windows.net/sandbox/Notify/NotifySample.pdf"
+    "?sv=2021-04-10&st=2022-09-07T09%3A40%3A55Z&se=2025-01-01T10%3A40%3A00Z&sr=b&sp=r&sig="
+    "EQkqHZ7FI%2B%2FnD3C4Uo97l614hPtycKp%2BA1odhsvkprI%3D"
+)
+
 
 def import_sample_dfs(transactions: int = 7):
     """

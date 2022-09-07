@@ -8,7 +8,7 @@ from notify.exceptions import EnvironmentVariablesError
 
 def format_numbers(df: pd.DataFrame, currency_columns: list = None, number_columns: list = None):
     """
-    Deze functie converteerd currency (bedrag) en number (getal) kolommen naar geformatteerde tekstvelden.
+    Deze functie converteert currency (bedrag) en number (getal) kolommen naar geformatteerde tekstvelden.
 
     Parameters
     ----------

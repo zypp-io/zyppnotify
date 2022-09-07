@@ -4,7 +4,7 @@ import time
 from keyvault import secrets_to_environment
 
 from notify import NotifyMail, format_numbers
-from notify.tests import import_sample_dfs
+from notify.tests import PDF_STORAGE_LINK, import_sample_dfs
 
 secrets_to_environment("notify")
 
@@ -54,15 +54,22 @@ def test_send_multiple_emails():
 def test_send_file():
     message = "This is a test from notify"
     subject = "Test Notify file"
+    file_name = "2010 car efficiency.csv"
+    file_path = os.path.join("notify", "tests", "data", file_name)
     NotifyMail(
         to=f"{os.environ.get('TEST_EMAIL_1')}",
         subject=subject,
         message=message,
-        files=os.path.join("notify", "tests", "data", "2010 car efficiency.csv"),
+        files={file_name: file_path},
     ).send_email()
 
 
-if __name__ == "__main__":
-    # test_send_single_email()
-    # test_send_multiple_emails()
-    test_send_email_with_formatted_table()
+def test_send_file_from_storage():
+    message = "This is a test from notify"
+    subject = "Test Notify file Azure Storage"
+    NotifyMail(
+        to=f"{os.environ.get('TEST_EMAIL_1')}",
+        subject=subject,
+        message=message,
+        files={"testpdf.pdf": PDF_STORAGE_LINK},
+    ).send_email()
