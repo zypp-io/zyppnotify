@@ -75,7 +75,7 @@ class NotifyMail:
         msg["Date"] = formatdate(localtime=True)
         msg["Subject"] = self.subject
 
-        if self.df.shape[0] in range(1, 30):
+        if self.df.shape[0] in range(1, 31):
             html_table = dataframe_to_html(df=self.df)
         elif self.df.shape[0] > 30:
             logging.warning(f"Only first 30 records will be added. ({self.df.shape[0]} > the limit of 30).")
