@@ -8,22 +8,21 @@ from notify.exceptions import EnvironmentVariablesError
 
 def format_numbers(df: pd.DataFrame, currency_columns: list = None, number_columns: list = None):
     """
-    Deze functie converteerd currency (bedrag) en number (getal) kolommen naar geformatteerde tekstvelden.
+    This functions converts currencies (values) and numbers (digits) columns to formatted text columns.
 
     Parameters
     ----------
     df: pd.DataFrame
-        dataset waarin kolommen staan die geconverteerd dienen te worden
+        Dataframe with columns which need to be formatted
     currency_columns: list
-        lijst met kolomnamen die geconverteerd worden naar € kolommen en formats.
+        List of columns which will be formatted to currencies with a Euro sign
     number_columns: list
-        lijst met kolomnamen die geconverteerd worden naar nummer kolommen met nederlandse annotatie.
+        List with columns which will be formatted to European standard.
 
     Returns
     -------
     df: pd.DataFrame
-        dataset met kolommen die gebruikt kunnen worden voor het presenteren van
-        bedragen en nummers (locale=NL).
+        Dataframe with converted columns
     """
 
     # format de bedrag kolommen
@@ -64,18 +63,17 @@ def check_environment_variables(required_variables: list):
 
 def dataframe_to_html(df: pd.DataFrame) -> str:
     """
-    Deze functie zet een dataframe om in een opgemaakte HTML table. Wanneer de gebruiker zelfstandig een HTML bericht
-    opbouwt, kan deze functie uitkomst bieden voor het invoegen van html tabellen.
+    This functions converts a dataframe to an HTML table.
 
     Parameters
     ----------
     df: pd.DataFrame
-        dataframe die in een HTML table geconverteerd dient te worden.
+        Dataframe which needs to be converted to HTML
 
     Returns
     -------
     pretty_html_table: str
-        html body voor de gegeneerde HTML tabel
+        html body with generated HTML table
     """
 
     html_table = df.to_html(index=False, classes="styled-table", justify="center")

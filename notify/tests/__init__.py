@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
 
+PDF_STORAGE_LINK = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+
 
 def import_sample_dfs(transactions: int = 7):
     """
@@ -21,7 +23,7 @@ def import_sample_dfs(transactions: int = 7):
     df2 = pd.DataFrame(index=range(transactions))
     df2["amount"] = [np.random.randint(1000, 10000) for x in range(transactions)]
     df2["date"] = [
-        (pd.to_datetime("now") - pd.Timedelta(value=x, unit="days")).strftime("%Y-%m-%d") for x in range(transactions)
+        (pd.Timestamp.now() - pd.Timedelta(value=x, unit="days")).strftime("%Y-%m-%d") for x in range(transactions)
     ]
 
     dfs = {"Metadata": df1, "Transactions": df2}

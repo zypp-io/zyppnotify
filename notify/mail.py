@@ -6,8 +6,7 @@ from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import formatdate
-from pathlib import Path
-from typing import Union
+from urllib import request
 
 import pandas as pd
 
@@ -21,10 +20,10 @@ class NotifyMail:
         subject: str,
         message: str,
         cc: str = None,
-        files: Union[str, list] = None,
+        files: dict = None,
         df: pd.DataFrame = pd.DataFrame(),
         server: str = "smtp.office365.com",
-        port: str = 587,
+        port: int = 587,
         user_tls: bool = True,
     ):
         """
@@ -76,7 +75,7 @@ class NotifyMail:
         msg["Date"] = formatdate(localtime=True)
         msg["Subject"] = self.subject
 
-        if self.df.shape[0] in range(1, 30):
+        if self.df.shape[0] in range(1, 31):
             html_table = dataframe_to_html(df=self.df)
         elif self.df.shape[0] > 30:
             logging.warning(f"Only first 30 records will be added. ({self.df.shape[0]} > the limit of 30).")
@@ -89,13 +88,18 @@ class NotifyMail:
 
         # attach files if these are given else ignore
         if self.files:
-            for path in self.files:
+            # There might be a more safe way to check if a string is an url, but for our purposes, this suffices.
+            is_url = list(self.files.values())[0].startswith(("http", "www"))
+            for name, path in self.files.items():
                 part = MIMEBase("application", "octet-stream")
-                with open(path, "rb") as file:
-                    part.set_payload(file.read())
+                if is_url:
+                    with request.urlopen(path) as download:
+                        part.set_payload(download.read())
+                else:
+                    with open(path, "rb") as file:
+                        part.set_payload(file.read())
                 encoders.encode_base64(part)
-                # Path(path).name grabs the filename from the path
-                part.add_header("Content-Disposition", f"attachment; filename={Path(path).name}")
+                part.add_header("Content-Disposition", f"attachment; filename={name}")
                 msg.attach(part)
 
         smtp = smtplib.SMTP(self.server, self.port)
