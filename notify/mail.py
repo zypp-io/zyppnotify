@@ -20,6 +20,7 @@ class NotifyMail:
         subject: str,
         message: str,
         cc: str = None,
+        bcc: str = None,
         files: dict = None,
         df: pd.DataFrame = pd.DataFrame(),
         server: str = "smtp.office365.com",
@@ -38,7 +39,9 @@ class NotifyMail:
         message:
             HTML or plain text content of the message
         cc: str
-            e-mail adress to add as cc
+            e-mail address to add as cc
+        bcc: str
+            e-mail address to add as bcc
         files: str, list
             Path(s) to file(s) to add as attachment
         df: pd.DataFrame
@@ -47,6 +50,7 @@ class NotifyMail:
 
         self.to = to
         self.cc = cc
+        self.bcc = bcc
         self.subject = subject
         self.message = message
         self.files = [files] if isinstance(files, str) else files
@@ -72,6 +76,7 @@ class NotifyMail:
         msg["From"] = self.username
         msg["To"] = self.to
         msg["Cc"] = self.cc
+        msg["Bcc"] = self.bcc
         msg["Date"] = formatdate(localtime=True)
         msg["Subject"] = self.subject
 
