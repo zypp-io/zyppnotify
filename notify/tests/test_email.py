@@ -73,3 +73,14 @@ def test_send_file_from_storage():
         message=message,
         files={"testpdf.pdf": PDF_STORAGE_LINK},
     ).send_email()
+
+
+def test_send_bcc():
+    message = "This is a test from notify"
+    NotifyMail(
+        to=f"{os.environ.get('TEST_EMAIL_1')}",
+        bcc=f"{os.environ.get('TEST_EMAIL_2')}",
+        subject="Test Notify bcc emails",
+        message=message,
+    ).send_email()
+    time.sleep(2)
