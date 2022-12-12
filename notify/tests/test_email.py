@@ -95,14 +95,3 @@ def test_send_bcc():
         message=message,
     ).send_email()
     time.sleep(2)
-
-
-if __name__ == "__main__":
-    test_send_single_email()
-    test_send_email_with_table()
-    test_send_file()
-    test_send_email_with_formatted_table()
-    test_send_multiple_emails()
-    test_send_file_from_storage()
-    test_send_cc()
-    test_send_bcc()
