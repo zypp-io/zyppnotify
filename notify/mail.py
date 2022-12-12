@@ -50,6 +50,8 @@ class NotifyMail:
         self.message = message
         self.files = [files] if isinstance(files, str) else files
         self.df = df
+        self.graph = Graph()
+        self.graph.ensure_graph_for_app_only_auth()
 
     @staticmethod
     def read_file_content(path):
@@ -70,23 +72,23 @@ class NotifyMail:
         -------
         None
         """
-        graph = Graph()
-        graph.ensure_graph_for_app_only_auth()
         endpoint = f"https://graph.microsoft.com/v1.0/users/{self.sender}/sendMail"
 
         msg = {
             "Message": {
                 "Subject": self.subject,
                 "Body": {"ContentType": "HTML", "Content": self.message},
-                "ToRecipients": [{"EmailAddress": {"Address": x}} for x in self.to.split(",")],
+                "ToRecipients": [{"EmailAddress": {"Address": to.strip()}} for to in self.to.split(",")],
             },
             "SaveToSentItems": "true",
         }
 
         if self.cc:
-            msg["Message"]["CcRecipients"] = [{"EmailAddress": {"Address": x.strip()}} for x in self.cc.split(",")]
+            msg["Message"]["CcRecipients"] = [{"EmailAddress": {"Address": cc.strip()}} for cc in self.cc.split(",")]
         if self.bcc:
-            msg["Message"]["BccRecipients"] = [{"EmailAddress": {"Address": x.strip()}} for x in self.bcc.split(",")]
+            msg["Message"]["BccRecipients"] = [
+                {"EmailAddress": {"Address": bcc.strip()}} for bcc in self.bcc.split(",")
+            ]
 
         # add html table (if table less than 30 records)
         if self.df.shape[0] in range(1, 31):
@@ -114,5 +116,6 @@ class NotifyMail:
 
             msg["Message"]["Attachments"] = attachments
 
-        response = graph.app_client.post(endpoint, json=msg)
-        logging.debug(response.status_code)
+        response = self.graph.app_client.post(endpoint, json=msg)
+        if response.status_code < 200 or response.status_code > 299:
+            raise ValueError(f"Sending the email was not successful, error message: {response.text}")

@@ -1,6 +1,7 @@
 import os
 import time
 
+import pytest
 from keyvault import secrets_to_environment
 
 from notify import NotifyMail, format_numbers
@@ -95,3 +96,10 @@ def test_send_bcc():
         message=message,
     ).send_email()
     time.sleep(2)
+
+
+def test_wrong_user():
+    mail = NotifyMail(to="hello@zypp.io", subject="Test wrong sender", message="Test")
+    mail.sender = "wrong@zypp.io"
+    with pytest.raises(ValueError):
+        mail.send_email()
