@@ -107,12 +107,12 @@ class NotifyMail:
                 attachments.append(
                     {
                         "@odata.type": "#microsoft.graph.fileAttachment",
-                        "Name": name,
                         "ContentBytes": content.decode("utf-8"),
+                        "Name": name,
                     }
                 )
 
-            msg["Attachments"] = attachments
+            msg["Message"]["Attachments"] = attachments
 
         response = graph.app_client.post(endpoint, json=msg)
         logging.debug(response.status_code)
