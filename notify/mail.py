@@ -64,13 +64,13 @@ class NotifyMail:
 
         return content
 
-    def send_email(self) -> None:
+    def send_email(self):
         """
         This function sends an e-mail from Microsoft Exchange server
 
         Returns
         -------
-        None
+        response: requests.Response
         """
         endpoint = f"https://graph.microsoft.com/v1.0/users/{self.sender}/sendMail"
 
@@ -117,5 +117,4 @@ class NotifyMail:
             msg["Message"]["Attachments"] = attachments
 
         response = self.graph.app_client.post(endpoint, json=msg)
-        if response.status_code < 200 or response.status_code > 299:
-            raise ValueError(f"Sending the email was not successful, error message: {response.text}")
+        return response
