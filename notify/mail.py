@@ -43,9 +43,9 @@ class NotifyMail:
 
         check_environment_variables(["EMAIL_USER", "MAIL_TENANT_ID", "MAIL_CLIENT_ID", "MAIL_CLIENT_SECRET"])
         self.sender = os.environ.get("EMAIL_USER")
-        self.to = to
-        self.cc = cc
-        self.bcc = bcc
+        self.to = to.replace(";", ",")
+        self.cc = cc.replace(";", ",") if cc is not None else cc
+        self.bcc = bcc.replace(";", ",") if bcc is not None else bcc
         self.subject = subject
         self.message = message
         self.files = [files] if isinstance(files, str) else files
