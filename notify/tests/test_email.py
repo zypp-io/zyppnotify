@@ -1,6 +1,7 @@
 import os
 import time
 
+import pytest
 from keyvault import secrets_to_environment
 
 from notify import NotifyMail, format_numbers
@@ -46,10 +47,12 @@ def test_send_email_with_formatted_table():
     time.sleep(2)
 
 
-def test_send_multiple_emails():
+@pytest.mark.parametrize("sep", [",", ";"])
+def test_send_multiple_emails(sep: str):
     message = "This is a test from notify"
+    to = sep.join([os.environ.get("TEST_EMAIL_1"), os.environ.get("TEST_EMAIL_2")])
     response = NotifyMail(
-        to=f"{os.environ.get('TEST_EMAIL_1')}, {os.environ.get('TEST_EMAIL_2')}",
+        to=to,
         subject="Test Notify multiple emails",
         message=message,
     ).send_email()
