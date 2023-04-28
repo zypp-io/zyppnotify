@@ -74,6 +74,22 @@ def test_send_file():
     assert response.status_code == 202
 
 
+def test_send_multiple_files():
+    message = "This is a test from notify for multiple files"
+    subject = "Test Notify multiple files"
+    core_file_name = "2010 car efficiency"
+    file_name_1 = f"{core_file_name}_1.csv"
+    file_name_2 = f"{core_file_name}_2.csv"
+    file_path = os.path.join("notify", "tests", "data", f"{core_file_name}.csv")
+    response = NotifyMail(
+        to=f"{os.environ.get('TEST_EMAIL_1')}",
+        subject=subject,
+        message=message,
+        files={file_name_1: file_path, file_name_2: file_path},
+    ).send_email()
+    assert response.status_code == 202
+
+
 def test_send_file_from_storage():
     message = "This is a test from notify"
     subject = "Test Notify file Azure Storage"
