@@ -35,7 +35,7 @@ class NotifyMail:
             e-mail address to add as cc
         bcc: str
             e-mail address to add as bcc
-        files: str, list
+        files: str, dict
             Path(s) to file(s) to add as attachment
         df: pd.DataFrame
             dataframe that needs to be added to the HTML message.
@@ -48,7 +48,7 @@ class NotifyMail:
         self.bcc = bcc.replace(";", ",") if bcc is not None else bcc
         self.subject = subject
         self.message = message
-        self.files = [files] if isinstance(files, str) else files
+        self.files = {files.split("/")[-1]: files} if isinstance(files, str) else files
         self.df = df
         self.graph = Graph()
         self.graph.ensure_graph_for_app_only_auth()
