@@ -18,7 +18,7 @@ pip install zyppnotify
 ```
 
 ## Notify Mail
-When using the `NotifyMail` class, the environment variables `EMAIL_USER` and `EMAIL_PW` need to be set.
+When using the `NotifyMail` class, the environment variables `EMAIL_USER` (mailadress you want to mail with), `MAIL_TENANT_ID`, `MAIL_CLIENT_ID` and `MAIL_CLIENT_SECRET` (3x App registration credentials with User.Read.All permission with admin consent to authenticate to MS Graph) need to be set.
 The initialization of this class will return an error if one of thes variables is not set.
 
 ```python
