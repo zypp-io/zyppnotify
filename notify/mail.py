@@ -83,29 +83,25 @@ class NotifyMail:
         -------
         response: requests.Response
         """
-        message = Message()
-        sender = EmailAddress()
-        sender.address = self.sender
-        sender_recipient = Recipient()
-        sender_recipient.email_address = sender
+
+        sender = EmailAddress(address=self.sender)
+        sender_recipient = Recipient(email_address=sender)
         recipients = []
         tos = self.to.split(",")
         for to in tos:
-            to_email = EmailAddress()
-            to_email.address = to
-            to_recipient = Recipient()
-            to_recipient.email_address = to_email
+            to_email = EmailAddress(address=to)
+            to_recipient = Recipient(email_address=to_email)
             recipients.append(to_recipient)
-        message.to_recipients = recipients
+        message = Message(
+            to_recipients=recipients, subject=self.subject, sender=sender_recipient, from_=sender_recipient
+        )
         # CC if present
         if self.cc:
             ccs = self.cc.split(",")
             cc_recipients = []
             for cc in ccs:
-                cc_email = EmailAddress()
-                cc_email.address = cc
-                cc_recipient = Recipient()
-                cc_recipient.email_address = cc_email
+                cc_email = EmailAddress(address=cc)
+                cc_recipient = Recipient(email_address=cc_email)
                 cc_recipients.append(cc_recipient)
             message.cc_recipients = cc_recipients
         # BCC if present
@@ -113,15 +109,11 @@ class NotifyMail:
             bccs = self.bcc.split(",")
             bcc_recipients = []
             for bcc in bccs:
-                bcc_email = EmailAddress()
-                bcc_email.address = bcc
-                bcc_recipient = Recipient()
-                bcc_recipient.email_address = bcc_email
+                bcc_email = EmailAddress(address=bcc)
+                bcc_recipient = Recipient(email_address=bcc_email)
                 bcc_recipients.append(bcc_recipient)
             message.bcc_recipients = bcc_recipients
-        email_body = ItemBody()
-        email_body.content = self.message
-        email_body.content_type = BodyType.Html
+        email_body = ItemBody(content=self.message, content_type=BodyType.Html)
         # add html table (if table less than 30 records)
         if self.df.shape[0] in range(1, 31):
             html_table = dataframe_to_html(df=self.df)
@@ -132,11 +124,6 @@ class NotifyMail:
             html_table = ""  # no data in dataframe (0 records)
 
         email_body.content += html_table
-
-        message.subject = self.subject
-        message.sender = sender_recipient
-        message.from_ = sender_recipient
-
         message.body = email_body
         if self.files:
             # There might be a more safe way to check if a string is an url, but for our purposes, this suffices.
@@ -150,9 +137,7 @@ class NotifyMail:
                 )
                 attachments.append(attachment)
             message.attachments = attachments
-        request_body = SendMailPostRequestBody()
-        request_body.message = message
-        request_body.save_to_sent_items = True
+        request_body = SendMailPostRequestBody(message=message, save_to_sent_items=True)
         success = asyncio.run(self.get_mail_response(request_body))
         return success
 
