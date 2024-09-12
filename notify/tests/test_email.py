@@ -52,7 +52,7 @@ def test_send_multiple_emails(sep: str):
     to = sep.join(
         [
             os.environ.get("TEST_EMAIL_1"),
-            "tim@zypp.io",
+            os.environ.get("TEST_EMAIL_2"),
         ]
     )
     response = NotifyMail(
@@ -94,8 +94,7 @@ def test_send_cc():
     message = "This is a test from notify"
     response = NotifyMail(
         to=f"{os.environ.get('TEST_EMAIL_1')}",
-        cc="tim@zypp.io",
-        # cc=f"{os.environ.get('TEST_EMAIL_2')}",
+        cc=f"{os.environ.get('TEST_EMAIL_2')}",
         subject="Test Notify cc emails",
         message=message,
     ).send_email()
@@ -107,8 +106,7 @@ def test_send_bcc():
     message = "This is a test from notify"
     response = NotifyMail(
         to=f"{os.environ.get('TEST_EMAIL_1')}",
-        # bcc=f"{os.environ.get('TEST_EMAIL_2')}",
-        bcc="tim@zypp.io",
+        bcc=f"{os.environ.get('TEST_EMAIL_2')}",
         subject="Test Notify bcc emails",
         message=message,
     ).send_email()
