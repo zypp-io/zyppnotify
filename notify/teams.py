@@ -33,15 +33,11 @@ class NotifyTeams:
         }
         self.body = []
 
-    def add_full_dataframe(self, df: pd.DataFrame) -> None:
+    @staticmethod
+    def create_adaptive_card_dataframe(df: pd.DataFrame) -> dict:
         """
-        Function to add a full dataframe to the adaptive card.
-        Parameters
-        ----------
-        df: pd.DataFrame
-            Dataframe that will be added to the card.
+        Function to create a full dataframe used in adaptive cards in an adaptive card.
         """
-
         if df.shape[0] > 30:
             logging.warning(f"only first 30 records will be added.({df.shape[0]}> the limit of 30).")
             df = df.head(n=30)
@@ -84,7 +80,17 @@ class NotifyTeams:
             row = {"type": "TableRow", "cells": cells}
             rows.append(row)
         table = {"type": "Table", "columns": col_widths, "rows": rows, "showGridLines": True}
-        # TODO: maak het aanmaken een losse functie dan kan die ook aangeroepen worden om aan extra toegevoegd te worden door de gebruiker
+        return table
+
+    def add_full_dataframe(self, df: pd.DataFrame) -> None:
+        """
+        Function to add a full dataframe to the adaptive card.
+        Parameters
+        ----------
+        df: pd.DataFrame
+            Dataframe that will be added to the card.
+        """
+        table = self.create_adaptive_card_dataframe(df)
         self.body.append(table)
 
     def create_dataframe_report(self, dfs: DfsInfo) -> None:
@@ -146,11 +152,16 @@ class NotifyTeams:
             button_list.append(button)
         self.msg["attachments"][0]["content"]["actions"] = button_list
 
-    def create_message_header(
-        self,
-        title,
-        subtitle=None,
-    ):
+    def create_message_header(self, title: str, subtitle: str = None):
+        """
+        Function to create the header of the Teams message containing the title, subtitle (optional) and Python-logo
+        Parameters
+        ----------
+        title: str
+            Title of the message
+        subtitle: str
+            Subtitle of the message (optional)
+        """
         title_item = {
             "type": "TextBlock",
             "weight": "Bolder",
@@ -194,7 +205,15 @@ class NotifyTeams:
         }
         self.body.append(message_header)
 
-    def create_simple_message(self, message):
+    def create_simple_message(self, message: str):
+        """
+        Function to create a simple message block in the teams message. When <br> tags are included the enters are
+        created by creating new text blocks.
+        Parameters
+        ----------
+        message: str
+            message that needs to be added to the card
+        """
         if "<br>" in message:
             message_items = message.split("<br>")
             for message_item in message_items:
@@ -213,7 +232,14 @@ class NotifyTeams:
             }
             self.body.append(message_item)
 
-    def create_warning_message(self, warning_message):
+    def create_warning_message(self, warning_message: str):
+        """
+        Function to create a warning message at the top of the teams message and under the heaader
+        Parameters
+        ----------
+        warning_message: str
+            warning message that will be added to the card with a warning symbol
+        """
         warning = {
             "type": "ColumnSet",
             "columns": [
