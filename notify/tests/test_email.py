@@ -1,9 +1,8 @@
 import os
 import time
-
 import pytest
 from keyvault import secrets_to_environment
-
+from msgraph.generated.models.o_data_errors.o_data_error import ODataError
 from notify import NotifyMail, format_numbers
 from notify.tests import PDF_STORAGE_LINK, import_sample_dfs
 
@@ -15,7 +14,7 @@ def test_send_single_email():
     response = NotifyMail(
         to=f"{os.environ.get('TEST_EMAIL_1')}", subject="Test Notify single email", message=message
     ).send_email()
-    assert response.status_code == 202
+    assert response
     time.sleep(2)
 
 
@@ -29,7 +28,7 @@ def test_send_email_with_table():
         message=message,
         df=df,
     ).send_email()
-    assert response.status_code == 202
+    assert response
     time.sleep(2)
 
 
@@ -43,20 +42,25 @@ def test_send_email_with_formatted_table():
         message=message,
         df=df,
     ).send_email()
-    assert response.status_code == 202
+    assert response
     time.sleep(2)
 
 
 @pytest.mark.parametrize("sep", [",", ";"])
 def test_send_multiple_emails(sep: str):
     message = "This is a test from notify"
-    to = sep.join([os.environ.get("TEST_EMAIL_1"), os.environ.get("TEST_EMAIL_2")])
+    to = sep.join(
+        [
+            os.environ.get("TEST_EMAIL_1"),
+            os.environ.get("TEST_EMAIL_2"),
+        ]
+    )
     response = NotifyMail(
         to=to,
         subject="Test Notify multiple emails",
         message=message,
     ).send_email()
-    assert response.status_code == 202
+    assert response
     time.sleep(2)
 
 
@@ -71,7 +75,7 @@ def test_send_file():
         message=message,
         files={file_name: file_path},
     ).send_email()
-    assert response.status_code == 202
+    assert response
 
 
 def test_send_file_from_storage():
@@ -83,7 +87,7 @@ def test_send_file_from_storage():
         message=message,
         files={"testpdf.pdf": PDF_STORAGE_LINK},
     ).send_email()
-    assert response.status_code == 202
+    assert response
 
 
 def test_send_cc():
@@ -94,7 +98,7 @@ def test_send_cc():
         subject="Test Notify cc emails",
         message=message,
     ).send_email()
-    assert response.status_code == 202
+    assert response
     time.sleep(2)
 
 
@@ -106,12 +110,12 @@ def test_send_bcc():
         subject="Test Notify bcc emails",
         message=message,
     ).send_email()
-    assert response.status_code == 202
+    assert response
     time.sleep(2)
 
 
 def test_wrong_user():
     mail = NotifyMail(to=os.environ.get("TEST_EMAIL_1"), subject="Test wrong sender", message="Test")
     mail.sender = "wrong@zypp.io"
-    response = mail.send_email()
-    assert response.status_code == 404
+    with pytest.raises(ODataError):
+        mail.send_email()
