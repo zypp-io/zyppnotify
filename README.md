@@ -33,6 +33,7 @@ mail.send_email()
 ```
 
 ## Notify Teams
+For the Notify for Teams (1.0.0) you can create a webhook as by following the steps in the [Microsoft documentation](https://support.microsoft.com/en-us/office/create-incoming-webhooks-with-workflows-for-microsoft-teams-8ae491c7-0394-4861-ba59-055e33f75498).
 ```python
 from notify import NotifyTeams
 from notify.tests import import_sample_dfs
@@ -51,7 +52,41 @@ teams.basic_message(title="Notify me!",
                     message="This is optional",
                     buttons={"button_name": "https://www.my_link.nl"},
                     dfs=dfs) #  creates a report on the dataframes processed.
+```
+ ### Add extra elements to Teams message
+With the parameter `extra` the user can add adaptive cards elements to the message. The `extra` parameter should be a
+list of dictionaries. The dictionaries should contain the keys `index` and `item`. The `index` key should be an integer
+and the `item` key should be a dictionary containing the adaptive card element. The `index` key determines the location
+in the message.
 
+```python
+from notify import NotifyTeams
+
+webhook = ("REPLACE_ME")
+
+teams = NotifyTeams(webhook=webhook)
+
+extra_item = {"type": "TextBlock", "color": "good", "text": "This is extra text in green", "wrap": "true"}
+teams.basic_message(title="Notify me!",
+                    message="This is optional",
+                    buttons={"button_name": "https://www.my_link.nl"},
+                    extra=[{"index": 3, "item": extra_item}]) #  creates a report on the dataframes processed.
+```
+
+With the method `create_adaptive_card_dataframe(df)` you can create an Adaptive Card dataframe to be added as an extra element.
+```python
+from notify import NotifyTeams
+from notify.tests import import_sample_dfs
+
+webhook = ("REPLACE_ME")
+
+teams = NotifyTeams(webhook=webhook)
+df = import_sample_dfs().get("Transactions")
+extra_df = teams.create_adaptive_card_dataframe(df)
+teams.basic_message(title="Notify me!",
+                    message="This is optional",
+                    buttons={"button_name": "https://www.my_link.nl"},
+                    extra=[{"index": 3, "item": extra_df}]) #  creates a report on the dataframes processed.
 ```
 
 ## Notify utils
