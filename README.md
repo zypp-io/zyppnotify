@@ -34,6 +34,10 @@ mail.send_email()
 
 ## Notify Teams
 For the Notify for Teams (1.0.0) you can create a webhook as by following the steps in the [Microsoft documentation](https://support.microsoft.com/en-us/office/create-incoming-webhooks-with-workflows-for-microsoft-teams-8ae491c7-0394-4861-ba59-055e33f75498).
+
+Requirement: Add member that sends the message to the channel
+
+In the workflow app, make sure the message is sent as user, and not as Flowbot.
 ```python
 from notify import NotifyTeams
 from notify.tests import import_sample_dfs
