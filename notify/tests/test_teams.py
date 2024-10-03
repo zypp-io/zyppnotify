@@ -76,9 +76,9 @@ def test_teams_with_extra():
     )  # adds the dataframe to the message as a table
 
 
-def test_teams_to_large_basic_message():
+def test_teams_size_basic_message():
     """
-    versturen van een simpel teams bericht
+    versturen van een te groot bericht
     """
     teams = NotifyTeams(webhook=os.environ.get("teams_webhook"))
     with pytest.raises(ValueError):
