@@ -1,5 +1,7 @@
 import os
 
+import pytest
+
 from notify import NotifyTeams
 from notify.tests import import_sample_dfs
 
@@ -45,7 +47,6 @@ def test_teams_with_df():
     """
 
     df = import_sample_dfs().get("Transactions")
-
     teams = NotifyTeams(webhook=os.environ.get("teams_webhook"))
     teams.basic_message(
         title="Pytest with 1 dataframe",
@@ -73,6 +74,15 @@ def test_teams_with_extra():
         df=df,
         extra=[{"index": 3, "item": extra_item}],
     )  # adds the dataframe to the message as a table
+
+
+def test_teams_size_basic_message():
+    """
+    versturen van een te groot bericht
+    """
+    teams = NotifyTeams(webhook=os.environ.get("teams_webhook"))
+    with pytest.raises(ValueError):
+        teams.basic_message(title="Pytest", message="This is message is too large" * 9999)
 
 
 if __name__ == "__main__":

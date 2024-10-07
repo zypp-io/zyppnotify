@@ -3,6 +3,7 @@ import logging
 import pandas as pd
 import requests
 from notify.types import DfsInfo
+from pympler import asizeof
 
 
 class NotifyTeams:
@@ -41,6 +42,9 @@ class NotifyTeams:
         if df.shape[0] > 30:
             logging.warning(f"only first 30 records will be added.({df.shape[0]}> the limit of 30).")
             df = df.head(n=30)
+        if df.shape[1] > 10:
+            logging.warning("Only the first 10 columns will be shown")
+            df = df.iloc[:, :10].copy()
 
         df_dict = df.to_dict("records")
         col_widths = []
@@ -349,6 +353,9 @@ class NotifyTeams:
         if extra:
             self.add_extra_elements(extra)
         self.msg["attachments"][0]["content"]["body"] = self.body
+        body_size = asizeof.asizeof(self.body)
+        if body_size > 40_000:
+            raise ValueError(f"Body size is {body_size} bytes. This is will result in a Teams message above 28KB.")
         try:
             response = requests.post(url=self.webhook, json=self.msg)
             return response
