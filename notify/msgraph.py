@@ -1,13 +1,13 @@
 import os
 
 from azure.identity import ClientSecretCredential
-from msgraph.core import GraphClient
+from msgraph import GraphServiceClient
 
 
 class Graph:
-    user_client: GraphClient
+    user_client: GraphServiceClient
     client_credential: ClientSecretCredential
-    app_client: GraphClient
+    app_client: GraphServiceClient
 
     def ensure_graph_for_app_only_auth(self):
         if not hasattr(self, "client_credential"):
@@ -18,6 +18,6 @@ class Graph:
             self.client_credential = ClientSecretCredential(tenant_id, client_id, client_secret)
 
         if not hasattr(self, "app_client"):
-            self.app_client = GraphClient(
-                credential=self.client_credential, scopes=["https://graph.microsoft.com/.default"]
+            self.app_client = GraphServiceClient(
+                credentials=self.client_credential, scopes=["https://graph.microsoft.com/.default"]
             )

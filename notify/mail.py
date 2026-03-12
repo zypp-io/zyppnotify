@@ -1,3 +1,4 @@
+import asyncio
 import base64
 import logging
 import os
@@ -6,6 +7,16 @@ from urllib import request
 import pandas as pd
 
 from notify.msgraph import Graph
+
+from msgraph.generated.models.body_type import BodyType
+from msgraph.generated.models.message import Message
+from msgraph.generated.models.email_address import EmailAddress
+from msgraph.generated.models.item_body import ItemBody
+from msgraph.generated.models.recipient import Recipient
+from msgraph.generated.users.item.send_mail.send_mail_post_request_body import SendMailPostRequestBody
+from msgraph.generated.models.o_data_errors.o_data_error import ODataError
+
+from msgraph.generated.models.file_attachment import FileAttachment
 from notify.utils import check_environment_variables, dataframe_to_html
 
 
@@ -72,24 +83,37 @@ class NotifyMail:
         -------
         response: requests.Response
         """
-        endpoint = f"https://graph.microsoft.com/v1.0/users/{self.sender}/sendMail"
 
-        msg = {
-            "Message": {
-                "Subject": self.subject,
-                "Body": {"ContentType": "HTML", "Content": self.message},
-                "ToRecipients": [{"EmailAddress": {"Address": to.strip()}} for to in self.to.split(",")],
-            },
-            "SaveToSentItems": "true",
-        }
-
+        sender = EmailAddress(address=self.sender)
+        sender_recipient = Recipient(email_address=sender)
+        recipients = []
+        tos = self.to.split(",")
+        for to in tos:
+            to_email = EmailAddress(address=to)
+            to_recipient = Recipient(email_address=to_email)
+            recipients.append(to_recipient)
+        message = Message(
+            to_recipients=recipients, subject=self.subject, sender=sender_recipient, from_=sender_recipient
+        )
+        # CC if present
         if self.cc:
-            msg["Message"]["CcRecipients"] = [{"EmailAddress": {"Address": cc.strip()}} for cc in self.cc.split(",")]
+            ccs = self.cc.split(",")
+            cc_recipients = []
+            for cc in ccs:
+                cc_email = EmailAddress(address=cc)
+                cc_recipient = Recipient(email_address=cc_email)
+                cc_recipients.append(cc_recipient)
+            message.cc_recipients = cc_recipients
+        # BCC if present
         if self.bcc:
-            msg["Message"]["BccRecipients"] = [
-                {"EmailAddress": {"Address": bcc.strip()}} for bcc in self.bcc.split(",")
-            ]
-
+            bccs = self.bcc.split(",")
+            bcc_recipients = []
+            for bcc in bccs:
+                bcc_email = EmailAddress(address=bcc)
+                bcc_recipient = Recipient(email_address=bcc_email)
+                bcc_recipients.append(bcc_recipient)
+            message.bcc_recipients = bcc_recipients
+        email_body = ItemBody(content=self.message, content_type=BodyType.Html)
         # add html table (if table less than 30 records)
         if self.df.shape[0] in range(1, 31):
             html_table = dataframe_to_html(df=self.df)
@@ -99,22 +123,33 @@ class NotifyMail:
         else:
             html_table = ""  # no data in dataframe (0 records)
 
-        msg["Message"]["Body"]["Content"] += html_table
-
+        email_body.content += html_table
+        message.body = email_body
         if self.files:
             # There might be a more safe way to check if a string is an url, but for our purposes, this suffices.
             attachments = list()
             for name, path in self.files.items():
                 content = self.read_file_content(path)
-                attachments.append(
-                    {
-                        "@odata.type": "#microsoft.graph.fileAttachment",
-                        "ContentBytes": content.decode("utf-8"),
-                        "Name": name,
-                    }
+                attachment = FileAttachment(
+                    odata_type="#microsoft.graph.fileAttachment",
+                    name=name,
+                    content_bytes=base64.urlsafe_b64decode(content),
                 )
+                attachments.append(attachment)
+            message.attachments = attachments
+        request_body = SendMailPostRequestBody(message=message, save_to_sent_items=True)
+        success = asyncio.run(self.get_mail_response(request_body))
+        return success
 
-            msg["Message"]["Attachments"] = attachments
+    async def get_mail_response(self, request_body):
+        try:
+            await self.graph.app_client.users.by_user_id(self.sender).send_mail.post(request_body)
+        except ODataError as e:
+            # Handle Microsoft Graph API errors
+            raise ODataError(f"Error sending email: {e.message}")
 
-        response = self.graph.app_client.post(endpoint, json=msg)
-        return response
+        except Exception as e:
+            # Catch any other exceptions
+            raise Exception(f"An unexpected error occurred: {str(e)}")
+
+        return True

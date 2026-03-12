@@ -1,7 +1,10 @@
 import numpy as np
 import pandas as pd
+from keyvault import secrets_to_environment
 
 PDF_STORAGE_LINK = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+
+secrets_to_environment("notify")
 
 
 def import_sample_dfs(transactions: int = 7):
