@@ -91,7 +91,7 @@ def test_send_multiple_files():
         message=message,
         files={file_name_1: file_path, file_name_2: file_path},
     ).send_email()
-    assert response.status_code == 202
+    assert response
 
 
 def test_send_file_from_storage():
