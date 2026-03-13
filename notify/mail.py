@@ -144,9 +144,8 @@ class NotifyMail:
     async def get_mail_response(self, request_body):
         try:
             await self.graph.app_client.users.by_user_id(self.sender).send_mail.post(request_body)
-        except ODataError as e:
-            # Handle Microsoft Graph API errors
-            raise ODataError(f"Error sending email: {e.message}")
+        except ODataError:
+            raise
 
         except Exception as e:
             # Catch any other exceptions
