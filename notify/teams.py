@@ -7,28 +7,33 @@ from pympler import asizeof
 
 
 class NotifyTeams:
-    def __init__(self, webhook: str):
+    def __init__(self, webhook: str, full_width: bool = True):
         """
 
         Parameters
         ----------
         webhook: str
             url for sending the teams message
+        full_width: bool
+            if True (default), the card will take up the full width of the Teams chat.
+            if False, the card will use the default smaller width.
         """
 
         self.webhook = webhook
+        content = {
+            "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+            "type": "AdaptiveCard",
+            "version": "1.5",
+        }
+        if full_width:
+            content["msteams"] = {"width": "Full"}
         self.msg = {
             "type": "message",
             "attachments": [
                 {
                     "contentType": "application/vnd.microsoft.card.adaptive",
                     "contentUrl": None,
-                    "content": {
-                        "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-                        "type": "AdaptiveCard",
-                        "msteams": {"width": "Full"},
-                        "version": "1.4",
-                    },
+                    "content": content,
                 }
             ],
         }
@@ -48,10 +53,11 @@ class NotifyTeams:
 
         df_dict = df.to_dict("records")
         col_widths = []
+        for col in df.columns:
+            max_len = max(len(str(col)), df[col].astype(str).str.len().max())
+            col_widths.append({"width": max(1, int(max_len))})
         header_cells = []
         for col in df.columns:
-            width = {"width": "auto"}
-            col_widths.append(width)
             header_cell = {
                 "type": "TableCell",
                 "items": [
@@ -75,7 +81,7 @@ class NotifyTeams:
                     "items": [
                         {
                             "type": "TextBlock",
-                            "text": value,
+                            "text": str(value),
                             "wrap": True,
                         }
                     ],
